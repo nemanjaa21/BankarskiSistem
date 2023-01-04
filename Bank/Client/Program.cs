@@ -89,7 +89,7 @@ namespace Client
                 Console.WriteLine("4. Uplata");
                 Console.WriteLine("5. Isplata");
                 Console.WriteLine("6. Promena PIN-a");
-                Console.WriteLine("7. Izlazak\n");
+                Console.WriteLine("7. Izlazak");
 
                 Console.WriteLine("-> ");
                 string option = Console.ReadLine();
@@ -97,7 +97,9 @@ namespace Client
                 switch (option)
                 {
                     case "1":
-                        // TO DO
+                        Console.WriteLine("PIN: ");
+                        string pin = Console.ReadLine();
+                        bankCert.CardRequest(pin);
                         break;
                     case "2":
                         // TO DO

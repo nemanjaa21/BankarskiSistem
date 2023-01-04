@@ -34,7 +34,23 @@ namespace Client
 				Console.WriteLine("[TestCommunication] ERROR = {0}", e.Message);
 			}
 		}
-
+		public void CardRequest(string pin)
+		{
+			try
+			{
+				factory.CardRequest(pin);
+                Console.WriteLine("Racun na ime {0} je uspesno kreiran.\n", 
+					Formatter.ParseName(WindowsIdentity.GetCurrent().Name).ToLower());
+			}
+			catch (FaultException<CertException> exp)
+			{
+				Console.WriteLine("[CardRequest] " + exp.Detail.Reason);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("[CardRequest] ERROR = {0}", e.Message);
+			}
+		}
 		public void Dispose()
 		{
 			if (factory != null)

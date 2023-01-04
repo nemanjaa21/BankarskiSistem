@@ -11,6 +11,12 @@ namespace Contracts
     public interface ICert
     {
         [OperationContract]
+        [FaultContract(typeof(CertException))]
         void TestCommunication();
+
+        [OperationContract]
+        [FaultContract(typeof(CertException))]
+        void CardRequest(string pin);
+        
     }
 }
