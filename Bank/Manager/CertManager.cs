@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -46,8 +47,15 @@ namespace Manager
 		/// <returns> The requested certificate. If no valid certificate is found, returns null. </returns>
 		public static X509Certificate2 GetCertificateFromFile(string fileName)
 		{
-			X509Certificate2 certificate = null;
+			X509Certificate2 certificate = new X509Certificate2();
 
+			string workingDirectory = Environment.CurrentDirectory;
+			string path = Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName +
+				@"\Sertifikati\" + fileName + ".cer";
+
+			byte[] bytes = File.ReadAllBytes(path);
+
+			certificate.Import(bytes);
 
 			return certificate;
 		}

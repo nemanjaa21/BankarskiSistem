@@ -22,22 +22,24 @@ namespace Client
 
             CertProxy();
 
-            if (bankCert != null)
+            Console.WriteLine("Da li zelite da kreirate racun u banci? [Y/N]");
+            string answer = Console.ReadLine();
+
+            if(answer.Equals("Y") || answer.Equals("y"))
             {
-                // Proxy za transakcije
-               
-                BankProxy();
+                string pin = bankCert.CardRequest();
+            }
 
-                if (bankTransaction != null)
-                {
-                    Menu();
+            BankProxy();
 
-                    bankCert.Close();
-                    bankTransaction.Close();
-                }
+            if (bankTransaction != null)
+            {
+                Menu();
 
                 bankCert.Close();
+                bankTransaction.Close();
             }
+
             Console.WriteLine("\nPress <enter> to stop ...");
             Console.ReadLine();
         }
@@ -83,13 +85,11 @@ namespace Client
 
             do {
 
-                Console.WriteLine("1. Kreiraj racun");
-                Console.WriteLine("2. Povuci MasterCard sertifikat");
-                Console.WriteLine("3. Zahtev za novim MasterCard sertifikatom");
-                Console.WriteLine("4. Uplata");
-                Console.WriteLine("5. Isplata");
-                Console.WriteLine("6. Promena PIN-a");
-                Console.WriteLine("7. Izlazak");
+                Console.WriteLine("1. Zahtev za novim MasterCard sertifikatom");
+                Console.WriteLine("2. Uplata");
+                Console.WriteLine("3. Isplata");
+                Console.WriteLine("4. Promena PIN-a");
+                Console.WriteLine("5. Izlazak");
 
                 Console.WriteLine("-> ");
                 string option = Console.ReadLine();
@@ -97,9 +97,7 @@ namespace Client
                 switch (option)
                 {
                     case "1":
-                        Console.WriteLine("PIN: ");
-                        string pin = Console.ReadLine();
-                        bankCert.CardRequest(pin);
+                        // TO DO
                         break;
                     case "2":
                         // TO DO
@@ -111,13 +109,6 @@ namespace Client
                         // TO DO
                         break;
                     case "5":
-                        // TO DO
-                        break;
-                    case "6":
-                        // TO DO
-                        break;
-                    case "7":
-                        // TO DO
                         end = true;
                         break;
                     default:

@@ -34,13 +34,32 @@ namespace Client
 				Console.WriteLine("[TestCommunication] ERROR = {0}", e.Message);
 			}
 		}
-		public void CardRequest(string pin)
+		public string CardRequest()
 		{
+			string pin = String.Empty;
 			try
 			{
-				factory.CardRequest(pin);
-                Console.WriteLine("Racun na ime {0} je uspesno kreiran.\n", 
-					Formatter.ParseName(WindowsIdentity.GetCurrent().Name).ToLower());
+				string encryptedMessage = factory.CardRequest();
+
+                Console.WriteLine("Molimo Vas da instalirate sertifikate. Nakon toga pritisnite <Enter>.");
+
+				Console.ReadKey();
+
+				string clientName = Formatter.ParseName(WindowsIdentity.GetCurrent().Name);
+
+				// Dekripcija poslatog pina i tajnog kljuca
+
+				X509Certificate2 cert =
+					CertManager.GetCertificateFromStorage(StoreName.My, StoreLocation.LocalMachine, clientName);
+
+				string decryptedMessage = Manager.RSA.Decrypt(encryptedMessage, cert.GetRSAPrivateKey().ToXmlString(true));
+
+				pin = decryptedMessage.Substring(decryptedMessage.Length - 4, 4);
+				string secretKey = decryptedMessage.Substring(0, decryptedMessage.Length - 4);
+
+				SecretKey.StoreKey(secretKey, clientName);
+
+				Console.WriteLine("Racun na ime {0} je uspesno kreiran. Vas pin je: {1}\n", clientName, pin);
 			}
 			catch (FaultException<CertException> exp)
 			{
@@ -50,6 +69,8 @@ namespace Client
 			{
 				Console.WriteLine("[CardRequest] ERROR = {0}", e.Message);
 			}
+
+			return pin;
 		}
 		public void Dispose()
 		{

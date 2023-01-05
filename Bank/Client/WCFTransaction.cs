@@ -20,7 +20,7 @@ namespace Client
 			: base(binding, address)
 		{
 			/// cltCertCN.SubjectName should be set to the client's username. .NET WindowsIdentity class provides information about Windows user running the given process
-			string cltCertCN = Formatter.ParseName(WindowsIdentity.GetCurrent().Name).ToLower();
+			string cltCertCN = Formatter.ParseName(WindowsIdentity.GetCurrent().Name);
 			this.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = X509CertificateValidationMode.Custom;
 			this.Credentials.ServiceCertificate.Authentication.CustomCertificateValidator = new ClientCertValidator();
 			this.Credentials.ServiceCertificate.Authentication.RevocationMode = X509RevocationMode.NoCheck;

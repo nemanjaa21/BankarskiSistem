@@ -16,7 +16,7 @@ namespace Contracts
 
         [OperationContract]
         [FaultContract(typeof(CertException))]
-        void CardRequest(string pin);
+        string CardRequest();
         
     }
 }

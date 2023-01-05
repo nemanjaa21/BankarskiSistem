@@ -1,10 +1,12 @@
 ﻿using Contracts;
 using Manager;
+using Service.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.Text;
 using System.Threading;
@@ -21,7 +23,7 @@ namespace Service
             Console.WriteLine("[CERT] Communication established.");
         }
 
-        public void CardRequest(string pin)
+        public string CardRequest()
         {
             string clientName = Formatter.ParseName(Thread.CurrentPrincipal.Identity.Name);
             Console.WriteLine("[CERT] {0} je poslao zahtev za kreiranje racuna.", clientName);
@@ -35,61 +37,32 @@ namespace Service
                 throw new FaultException<CertException>(
                     new CertException("Imate otvoren racun u banci!"));
             }
-
-            string certCN = clientName.ToLower() + "_MasterCard";
+            
             string certName = clientName + "_MasterCard";
 
-            string path = Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName + @"\Sertifikati\makecert.exe";
-           
+            string path = Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName + @"\Sertifikati";
 
-            // .pvk and .cer
 
-            Process p1 = new Process();
+            // .pvk and .cer for auth
 
-            string arguments = string.Format("-sv {0}.pvk -iv BankCA.pvk -n \"CN={1}\" -pe -ic BankCA.cer {0}.cer -sr localmachine -ss My -sky signature", certName , certCN);
+            CertificateHelper.GenerateCertificateForAuth(path, clientName);
 
-            ProcessStartInfo info = new ProcessStartInfo(path, arguments);
-            info.WorkingDirectory = Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName + @"\Sertifikati";
+            // .pfx for auth
 
-            p1.StartInfo = info;
+            CertificateHelper.GeneratePvk(path, clientName);
 
-            try
-            {
-                p1.Start();
-            }
-            catch (Exception e)
-            {
-                throw new FaultException<CertException>(
-                      new CertException(e.Message));
-            }
-    
-            p1.WaitForExit();
-            p1.Dispose();
 
-            // .pfx
+            // .pvk and .cer for digital signature
 
-            Process p2 = new Process();
-            path = Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName + @"\Sertifikati\pvk2pfx.exe";
-      
-            arguments = string.Format("/pvk {0}.pvk /pi 123 /spc {0}.cer /pfx {0}.pfx", certName);
+            CertificateHelper.GenerateCertificateForDS(path, clientName + "_sign");
 
-            info = new ProcessStartInfo(path, arguments);
-            info.WorkingDirectory = Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName + @"\Sertifikati";
+            // .pfx for auth
 
-            p2.StartInfo = info;
+            CertificateHelper.GeneratePvk(path, clientName + "_sign");
 
-            try
-            {
-                p2.Start();
-            }
-            catch (Exception e)
-            {
-                throw new FaultException<CertException>(
-                      new CertException(e.Message));
-            }
+            // Generisanje PIN-a
 
-            p2.WaitForExit();
-            p2.Dispose();
+            string pin = PinHelper.GeneratePin();
 
             // Snimi racun u xml fajl
 
@@ -109,6 +82,35 @@ namespace Service
                 throw new FaultException<CertException>(
                       new CertException(e.Message));
             }
+
+            // Kriptuj PIN sa RSA
+
+            string secretKey = SecretKey.GenerateKey();
+            string toEncrypt = secretKey + pin;
+
+            X509Certificate2 certClient = null;
+
+            try
+            {
+                certClient = CertManager.GetCertificateFromFile(clientName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+ 
+            string encrypted = Manager.RSA.Encrypt(toEncrypt, certClient.GetRSAPublicKey().ToXmlString(false));
+
+            try
+            {
+                SecretKey.StoreKey(secretKey, clientName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+            return encrypted;
         }
     }
 }
