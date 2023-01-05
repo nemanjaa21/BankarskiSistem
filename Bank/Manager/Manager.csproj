@@ -49,6 +49,13 @@
     <Compile Include="RSA.cs" />
     <Compile Include="SecretKey.cs" />
     <Compile Include="ServiceCertValidator.cs" />
+    <Compile Include="TripleDES.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Contracts\Contracts.csproj">
+      <Project>{6E55E904-E2C4-441D-84AA-E1101663750A}</Project>
+      <Name>Contracts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

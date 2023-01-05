@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Contracts;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Selectors;
 using System.Linq;
@@ -21,8 +22,17 @@ namespace Manager
 		{
 			/// This will take service's certificate from storage
 			X509Certificate2 srvCert = CertManager.GetCertificateFromStorage(StoreName.My, StoreLocation.LocalMachine, Formatter.ParseName(WindowsIdentity.GetCurrent().Name));
-			
-			if (!certificate.Issuer.Equals(srvCert.Issuer))
+
+
+            List<string> serialNumbers = TXTHelper.ReadSerialNumbers();
+
+            if (serialNumbers.Contains(certificate.SerialNumber))
+            {
+                throw new Exception("Sertifikat je povucen.");
+            }
+
+
+            if (!certificate.Issuer.Equals(srvCert.Issuer))
 			{
 				throw new Exception("Certificate is not from the valid issuer.");
 			}

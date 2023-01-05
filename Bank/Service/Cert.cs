@@ -112,5 +112,71 @@ namespace Service
 
             return encrypted;
         }
+
+        public void RevokeRequest(byte[] message)
+        {
+            string clientName = Formatter.ParseName(Thread.CurrentPrincipal.Identity.Name);
+
+            string secretKey = SecretKey.LoadKey(clientName);
+
+            byte[] plaintext = TripleDES.Decrypt(message, secretKey);
+
+            string pin = System.Text.Encoding.UTF8.GetString(plaintext);
+
+            List<Racun> racuni = XMLHelper.ReadAllBankAccounts();
+
+            var racun = racuni.Find(x => x.Username.Equals(clientName));
+
+            // Provera da li je ispravan pin
+
+            if (!racun.Pin.Equals(HashHelper.HashPassword(pin)))
+            {
+                throw new FaultException<CertException>(
+                    new CertException("Uneli ste pogresan PIN!"));
+            }
+
+            // Dobavljamo klijentov sertifikat koji zeli da povuce
+
+            X509Certificate2 cert =
+                CertManager.GetCertificateFromStorage(StoreName.TrustedPeople, StoreLocation.LocalMachine, clientName);
+
+            // Upisujemo njegov serijski broj u listu povucenih sertifikata
+            try
+            {
+                Console.WriteLine(cert.SerialNumber);
+                TXTHelper.SaveSerialNumber(cert.SerialNumber);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+            // Brisemo sve sertifikate
+
+            string path = Directory.GetParent(workingDirectory).Parent.Parent.Parent.FullName + @"\Sertifikati\";
+
+            File.Delete(Path.Combine(path, clientName + ".pvk"));
+            File.Delete(Path.Combine(path, clientName + "_sign.pvk"));
+            File.Delete(Path.Combine(path, clientName + ".pfx"));
+            File.Delete(Path.Combine(path, clientName + "_sign.pfx"));
+            File.Delete(Path.Combine(path, clientName + ".cer"));
+            File.Delete(Path.Combine(path, clientName + "_sign.cer"));
+
+            // .pvk and .cer for auth
+
+            CertificateHelper.GenerateCertificateForAuth(path, clientName);
+
+            // .pfx for auth
+
+            CertificateHelper.GeneratePvk(path, clientName);
+
+            // .pvk and .cer for digital signature
+
+            CertificateHelper.GenerateCertificateForDS(path, clientName + "_sign");
+
+            // .pfx for auth
+
+            CertificateHelper.GeneratePvk(path, clientName + "_sign");
+        }
     }
 }

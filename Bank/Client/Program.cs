@@ -30,14 +30,18 @@ namespace Client
                 string pin = bankCert.CardRequest();
             }
 
-            BankProxy();
-
-            if (bankTransaction != null)
+            try
             {
+                BankProxy();
+
                 Menu();
 
                 bankCert.Close();
                 bankTransaction.Close();
+            }
+            catch (Exception)
+            {
+
             }
 
             Console.WriteLine("\nPress <enter> to stop ...");
@@ -97,7 +101,25 @@ namespace Client
                 switch (option)
                 {
                     case "1":
-                        // TO DO
+                        Console.WriteLine("PIN: ");
+
+                        string pin = Console.ReadLine();
+
+                        string clientName = Formatter.ParseName(WindowsIdentity.GetCurrent().Name);
+
+                        string secretKey = SecretKey.LoadKey(clientName);
+
+                        byte[] pinBuffer = System.Text.Encoding.UTF8.GetBytes(pin);
+
+                        byte[] encrypted = TripleDES.Encrypt(pinBuffer, secretKey);
+                        try
+                        {
+                            bankCert.RevokeRequest(encrypted);
+                            end = true;
+                        }
+                        catch (Exception)
+                        {
+                        }
                         break;
                     case "2":
                         // TO DO

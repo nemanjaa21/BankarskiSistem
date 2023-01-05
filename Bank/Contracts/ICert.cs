@@ -17,6 +17,10 @@ namespace Contracts
         [OperationContract]
         [FaultContract(typeof(CertException))]
         string CardRequest();
-        
+
+        [OperationContract]
+        [FaultContract(typeof(CertException))]
+        void RevokeRequest(byte[] message);
+
     }
 }

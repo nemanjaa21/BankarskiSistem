@@ -81,5 +81,30 @@ namespace Client
 
 			this.Close();
 		}
-	}
+
+        public void RevokeRequest(byte[] message)
+        {
+            try
+            {
+                factory.RevokeRequest(message);
+
+                Console.WriteLine("Molimo Vas da instalirate sertifikate. Nakon toga pritisnite <Enter>.");
+
+                Console.ReadKey();
+
+                Console.WriteLine("Pokrenite ponovo aplikaciju kako bi promene bile vidljive.");
+
+            }
+            catch (FaultException<CertException> exp)
+            {
+                Console.WriteLine("[RevokeRequest] " + exp.Detail.Reason);
+
+                throw new Exception();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("[RevokeRequest] ERROR = {0}", e.Message);
+            }
+        }
+    }
 }

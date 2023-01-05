@@ -33,5 +33,24 @@ namespace Service
             return racuni;
         }
 
+        static public void UpdateBankAccount(string username, string newPin)
+        {
+            List<Racun> racuni = ReadAllBankAccounts();
+
+            foreach (var racun in racuni)
+            {
+                if (racun.Username.Equals(username))
+                {
+                    racun.Pin = newPin;
+                }
+            }
+
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Racun>));
+            using (TextWriter textWriter = new StreamWriter("../../bankAccounts.xml"))
+            {
+                serializer.Serialize(textWriter, racuni);
+            }
+        }
+
     }
 }

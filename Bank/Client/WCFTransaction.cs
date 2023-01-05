@@ -34,15 +34,18 @@ namespace Client
 
 		public void TestCommunication()
 		{
-			try
-			{
-				factory.TestCommunication();
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("[TestCommunication] ERROR = {0}", e.Message);
-			}
-		}
+            try
+            {
+                factory.TestCommunication();
+                Console.WriteLine("[TestCommunication] Uspesno ste se autentifikovali uz pomoc sertifikata.\n");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("[TestCommunication] Ne posedujete sertifikat ili vam je sertifikat povucen.\n");
+
+                throw new Exception();
+            }
+        }
 
 		public void Dispose()
 		{
