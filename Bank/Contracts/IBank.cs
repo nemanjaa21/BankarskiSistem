@@ -11,6 +11,11 @@ namespace Contracts
     public interface IBank
     {
         [OperationContract]
+        [FaultContract(typeof(BankException))]
         void TestCommunication();
+
+        [OperationContract]
+        [FaultContract(typeof(BankException))]
+        void Deposit(byte[] message);
     }
 }

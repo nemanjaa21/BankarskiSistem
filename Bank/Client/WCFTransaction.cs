@@ -56,5 +56,23 @@ namespace Client
 
 			this.Close();
 		}
-	}
+
+        public void Deposit(byte[] message)
+        {
+            try
+            {
+                factory.Deposit(message);
+
+                Console.WriteLine("Uspesno uplacen depozit.");
+            }
+            catch (FaultException<BankException> exp)
+            {
+                Console.WriteLine("[Deposit] " + exp.Detail.Reason);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("[Deposit] " + e.Message);
+            }
+        }
+    }
 }

@@ -101,28 +101,60 @@ namespace Client
                 switch (option)
                 {
                     case "1":
-                        Console.WriteLine("PIN: ");
-
-                        string pin = Console.ReadLine();
-
-                        string clientName = Formatter.ParseName(WindowsIdentity.GetCurrent().Name);
-
-                        string secretKey = SecretKey.LoadKey(clientName);
-
-                        byte[] pinBuffer = System.Text.Encoding.UTF8.GetBytes(pin);
-
-                        byte[] encrypted = TripleDES.Encrypt(pinBuffer, secretKey);
-                        try
                         {
-                            bankCert.RevokeRequest(encrypted);
-                            end = true;
-                        }
-                        catch (Exception)
-                        {
+                            Console.WriteLine("PIN: ");
+
+                            string pin = Console.ReadLine();
+
+                            string clientName = Formatter.ParseName(WindowsIdentity.GetCurrent().Name);
+
+                            string secretKey = SecretKey.LoadKey(clientName);
+
+                            byte[] pinBuffer = System.Text.Encoding.UTF8.GetBytes(pin);
+
+                            byte[] encrypted = TripleDES.Encrypt(pinBuffer, secretKey);
+                            try
+                            {
+                                bankCert.RevokeRequest(encrypted);
+                                end = true;
+                            }
+                            catch (Exception)
+                            {
+                            }
                         }
                         break;
                     case "2":
-                        // TO DO
+                        {
+                            string clientName = Formatter.ParseName(WindowsIdentity.GetCurrent().Name);
+
+                            Console.WriteLine("PIN: ");
+
+                            string pin = Console.ReadLine();
+
+                            Console.WriteLine("Iznos: ");
+
+                            string amount = Console.ReadLine();
+
+                            string message = pin + "-" + amount;
+
+                            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(message);
+
+                            X509Certificate2 signCert =
+                                CertManager.GetCertificateFromStorage(StoreName.My, StoreLocation.LocalMachine, clientName + "_sign");
+
+                            byte[] signedMessage = DigitalSignature.Create(message, signCert);
+
+                            byte[] plaintext = new byte[256 + buffer.Length];
+
+                            Buffer.BlockCopy(signedMessage, 0, plaintext, 0, 256);
+                            Buffer.BlockCopy(buffer, 0, plaintext, 256, buffer.Length);
+
+                            string secretKey = SecretKey.LoadKey(clientName);
+
+                            byte[] encrypted = TripleDES.Encrypt(plaintext, secretKey);
+
+                            bankTransaction.Deposit(encrypted);
+                        }
                         break;
                     case "3":
                         // TO DO

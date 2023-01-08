@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BankException.cs" />
     <Compile Include="CertException.cs" />
     <Compile Include="IBank.cs" />
     <Compile Include="ICert.cs" />

@@ -52,5 +52,24 @@ namespace Service
             }
         }
 
+        static public void UpdateBankAccountBalance(string username, float amount)
+        {
+            List<Racun> racuni = ReadAllBankAccounts();
+
+            foreach (var racun in racuni)
+            {
+                if (racun.Username.Equals(username))
+                {
+                    racun.Balance += amount;
+                }
+            }
+
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Racun>));
+            using (TextWriter textWriter = new StreamWriter("../../bankAccounts.xml"))
+            {
+                serializer.Serialize(textWriter, racuni);
+            }
+        }
+
     }
 }
