@@ -17,5 +17,9 @@ namespace Contracts
         [OperationContract]
         [FaultContract(typeof(BankException))]
         void Deposit(byte[] message);
+
+        [OperationContract]
+        [FaultContract(typeof(BankException))]
+        void Withdraw(byte[] message);
     }
 }

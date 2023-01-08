@@ -74,5 +74,23 @@ namespace Client
                 Console.WriteLine("[Deposit] " + e.Message);
             }
         }
+
+        public void Withdraw(byte[] message)
+        {
+            try
+            {
+                factory.Withdraw(message);
+
+                Console.WriteLine("Uspesno isplacen depozit.");
+            }
+            catch (FaultException<BankException> exp)
+            {
+                Console.WriteLine("[Withdraw] " + exp.Detail.Reason);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("[Withdraw] " + e.Message);
+            }
+        }
     }
 }

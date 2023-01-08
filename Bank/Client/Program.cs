@@ -157,7 +157,37 @@ namespace Client
                         }
                         break;
                     case "3":
-                        // TO DO
+                        {
+                            string clientName = Formatter.ParseName(WindowsIdentity.GetCurrent().Name);
+
+                            Console.WriteLine("PIN: ");
+
+                            string pin = Console.ReadLine();
+
+                            Console.WriteLine("Iznos: ");
+
+                            string amount = Console.ReadLine();
+
+                            string message = pin + "-" + amount;
+
+                            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(message);
+
+                            X509Certificate2 signCert =
+                                CertManager.GetCertificateFromStorage(StoreName.My, StoreLocation.LocalMachine, clientName + "_sign");
+
+                            byte[] signedMessage = DigitalSignature.Create(message, signCert);
+
+                            byte[] plaintext = new byte[256 + buffer.Length];
+
+                            Buffer.BlockCopy(signedMessage, 0, plaintext, 0, 256);
+                            Buffer.BlockCopy(buffer, 0, plaintext, 256, buffer.Length);
+
+                            string secretKey = SecretKey.LoadKey(clientName);
+
+                            byte[] encrypted = TripleDES.Encrypt(plaintext, secretKey);
+
+                            bankTransaction.Withdraw(encrypted);
+                        }
                         break;
                     case "4":
                         // TO DO
