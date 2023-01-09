@@ -92,5 +92,51 @@ namespace Client
                 Console.WriteLine("[Withdraw] " + e.Message);
             }
         }
+
+        public byte[] ResetPin(byte[] message)
+        {
+            byte[] newPin = null;
+
+            string clientName = Formatter.ParseName(WindowsIdentity.GetCurrent().Name);
+
+            string secretKey = SecretKey.LoadKey(clientName);
+
+            try
+            {
+                byte[] encrypted = factory.ResetPin(message);
+
+                byte[] decrypted = TripleDES.Decrypt(encrypted, secretKey);
+
+                X509Certificate2 signBank =
+                    CertManager.GetCertificateFromStorage(StoreName.TrustedPeople, StoreLocation.LocalMachine, "bank_sign");
+
+                byte[] sign = new byte[256];
+                newPin = new byte[decrypted.Length - 256];
+
+                Buffer.BlockCopy(decrypted, 0, sign, 0, 256);
+                Buffer.BlockCopy(decrypted, 256, newPin, 0, decrypted.Length - 256);
+
+                string newPinStr = System.Text.Encoding.UTF8.GetString(newPin);
+
+                if (DigitalSignature.Verify(newPinStr, sign, signBank))
+                {
+                    Console.WriteLine("\nUspesno resetovan PIN. Novi PIN: " + newPinStr);
+                }
+                else
+                {
+                    Console.WriteLine("Neuspesna verifikacija.");
+                }
+            }
+            catch (FaultException<BankException> exp)
+            {
+                Console.WriteLine("[ResetPin] " + exp.Detail.Reason);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("[ResetPin] " + e.Message);
+            }
+
+            return newPin;
+        }
     }
 }

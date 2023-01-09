@@ -190,7 +190,31 @@ namespace Client
                         }
                         break;
                     case "4":
-                        // TO DO
+                        {
+                            string clientName = Formatter.ParseName(WindowsIdentity.GetCurrent().Name);
+
+                            Console.WriteLine("PIN: ");
+
+                            string pin = Console.ReadLine();
+
+                            byte[] buffer = System.Text.Encoding.UTF8.GetBytes(pin);
+
+                            X509Certificate2 signCert =
+                                CertManager.GetCertificateFromStorage(StoreName.My, StoreLocation.LocalMachine, clientName + "_sign");
+
+                            byte[] signedMessage = DigitalSignature.Create(pin, signCert);
+
+                            string secretKey = SecretKey.LoadKey(clientName);
+
+                            byte[] plaintext = new byte[256 + buffer.Length];
+
+                            Buffer.BlockCopy(signedMessage, 0, plaintext, 0, 256);
+                            Buffer.BlockCopy(buffer, 0, plaintext, 256, buffer.Length);
+
+                            byte[] encrypted = TripleDES.Encrypt(plaintext, secretKey);
+
+                            bankTransaction.ResetPin(encrypted);
+                        }
                         break;
                     case "5":
                         end = true;

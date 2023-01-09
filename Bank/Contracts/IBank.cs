@@ -21,5 +21,9 @@ namespace Contracts
         [OperationContract]
         [FaultContract(typeof(BankException))]
         void Withdraw(byte[] message);
+
+        [OperationContract]
+        [FaultContract(typeof(BankException))]
+        byte[] ResetPin(byte[] message);
     }
 }
