@@ -48,6 +48,8 @@ namespace Service
                     if (float.TryParse(amount, out floatAmount))
                     {
                         XMLHelper.UpdateBankAccountBalance(clientName, floatAmount);
+
+                        Program.replicatorProxy.UpdateAccountBalance(clientName, floatAmount);
                     }
                     else
                     {
@@ -106,6 +108,8 @@ namespace Service
                         if (racun.Balance - floatAmount >= 0)
                         {
                             XMLHelper.UpdateBankAccountBalance(clientName, -floatAmount);
+
+                            Program.replicatorProxy.UpdateAccountBalance(clientName, -floatAmount);
                         }
                         else
                         {
@@ -185,6 +189,8 @@ namespace Service
                     Buffer.BlockCopy(pinBuffer, 0, plaintext, 256, pinBuffer.Length);
 
                     encrypted = TripleDES.Encrypt(plaintext, secretKey);
+
+                    Program.replicatorProxy.UpdateAccountPin(clientName, HashHelper.HashPassword(newPin));
 
                     return encrypted;
                 }

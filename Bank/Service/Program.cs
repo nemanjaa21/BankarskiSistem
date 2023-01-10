@@ -14,9 +14,12 @@ namespace Service
 {
     class Program
     {
+        public static WCFReplicator replicatorProxy = null;
         static void Main(string[] args)
         {
+            ReplicatorProxy();
             // Endpoint za transakcije
+
             NetTcpBinding binding1 = new NetTcpBinding();
             string address1 = "net.tcp://localhost:17001/BankTransaction";
 
@@ -72,6 +75,23 @@ namespace Service
                 host2.Close();
             }
 
+        }
+
+        private static void ReplicatorProxy()
+        {
+            NetTcpBinding binding = new NetTcpBinding();
+            string address = "net.tcp://localhost:17003/Replicator";
+
+            binding.Security.Mode = SecurityMode.Transport;
+            binding.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
+            binding.Security.Transport.ProtectionLevel = System.Net.Security.ProtectionLevel.EncryptAndSign;
+
+
+            EndpointAddress endpointAddress = new EndpointAddress(new Uri(address));
+
+            replicatorProxy = new WCFReplicator(binding, endpointAddress);
+
+            replicatorProxy.TestCommunication();
         }
     }
 }

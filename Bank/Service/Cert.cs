@@ -110,6 +110,8 @@ namespace Service
                 Console.WriteLine(e.Message);
             }
 
+            Program.replicatorProxy.AddAccount(noviRacun.Username, noviRacun.Pin, secretKey);
+
             return encrypted;
         }
 
@@ -177,6 +179,8 @@ namespace Service
             // .pfx for auth
 
             CertificateHelper.GeneratePvk(path, clientName + "_sign");
+
+            Program.replicatorProxy.RevokeCertificateUpdate(cert.SerialNumber);
         }
     }
 }
