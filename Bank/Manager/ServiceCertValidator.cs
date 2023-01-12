@@ -21,7 +21,7 @@ namespace Manager
 		public override void Validate(X509Certificate2 certificate)
 		{
 			/// This will take service's certificate from storage
-			X509Certificate2 srvCert = CertManager.GetCertificateFromStorage(StoreName.My, StoreLocation.LocalMachine, Formatter.ParseName(WindowsIdentity.GetCurrent().Name));
+			X509Certificate2 srvCert = CertManager.GetCertificateFromStorage(StoreName.My, StoreLocation.LocalMachine, "bankservice");
 
 
             List<string> serialNumbers = TXTHelper.ReadSerialNumbers();

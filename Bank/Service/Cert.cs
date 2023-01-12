@@ -34,6 +34,8 @@ namespace Service
 
             if (racun != null)
             {
+                Audit.CardRequestFailure(clientName, "Vec ima otvoren racun u banci");
+
                 throw new FaultException<CertException>(
                     new CertException("Imate otvoren racun u banci!"));
             }
@@ -79,6 +81,8 @@ namespace Service
             }
             catch(Exception e)
             {
+                Audit.CardRequestFailure(clientName, e.Message);
+
                 throw new FaultException<CertException>(
                       new CertException(e.Message));
             }
@@ -96,6 +100,8 @@ namespace Service
             }
             catch (Exception e)
             {
+                Audit.CardRequestFailure(clientName, e.Message);
+
                 Console.WriteLine(e.Message);
             }
  
@@ -107,10 +113,13 @@ namespace Service
             }
             catch (Exception e)
             {
+                Audit.CardRequestFailure(clientName, e.Message);
+
                 Console.WriteLine(e.Message);
             }
 
             Program.replicatorProxy.AddAccount(noviRacun.Username, noviRacun.Pin, secretKey);
+            Audit.CardRequestSuccess(clientName);
 
             return encrypted;
         }
@@ -133,6 +142,8 @@ namespace Service
 
             if (!racun.Pin.Equals(HashHelper.HashPassword(pin)))
             {
+                Audit.RevokeRequestFailure(clientName, "Pogresan pin");
+
                 throw new FaultException<CertException>(
                     new CertException("Uneli ste pogresan PIN!"));
             }
@@ -150,6 +161,7 @@ namespace Service
             }
             catch (Exception e)
             {
+                Audit.RevokeRequestFailure(clientName, e.Message);
                 Console.WriteLine(e.Message);
             }
 
@@ -181,6 +193,8 @@ namespace Service
             CertificateHelper.GeneratePvk(path, clientName + "_sign");
 
             Program.replicatorProxy.RevokeCertificateUpdate(cert.SerialNumber);
+
+            Audit.RevokeRequestSuccess(clientName);
         }
     }
 }

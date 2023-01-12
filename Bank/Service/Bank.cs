@@ -48,11 +48,12 @@ namespace Service
                     if (float.TryParse(amount, out floatAmount))
                     {
                         XMLHelper.UpdateBankAccountBalance(clientName, floatAmount);
-
+                        Audit.DepositSuccess(clientName, floatAmount);
                         Program.replicatorProxy.UpdateAccountBalance(clientName, floatAmount);
                     }
                     else
                     {
+                        Audit.DepositFailure(clientName, "Kolicina za uplatu mora biti broj");
                         throw new FaultException<BankException>(
                             new BankException("Kolicina za uplatu mora biti broj."));
                     }
@@ -60,12 +61,14 @@ namespace Service
                 }
                 else
                 {
+                    Audit.DepositFailure(clientName, "Pogresan pin!");
                     throw new FaultException<BankException>(
                         new BankException("Pogresan pin."));
                 }
             }
             else
             {
+                Audit.DepositFailure(clientName, "Potpis nije validan!");
                 throw new FaultException<BankException>(
                     new BankException("Potpis nije validan."));
             }
@@ -108,17 +111,19 @@ namespace Service
                         if (racun.Balance - floatAmount >= 0)
                         {
                             XMLHelper.UpdateBankAccountBalance(clientName, -floatAmount);
-
+                            Audit.WithdrawSuccess(clientName, floatAmount);
                             Program.replicatorProxy.UpdateAccountBalance(clientName, -floatAmount);
                         }
                         else
                         {
+                            Audit.WithdrawFailure(clientName, "Nedovoljno sredstava na racunu");
                             throw new FaultException<BankException>(
                                 new BankException("Nemate dovoljno sredstava na racunu."));
                         }
                     }
                     else
                     {
+                        Audit.WithdrawFailure(clientName, "Kolicina za uplatu mora biti broj!");
                         throw new FaultException<BankException>(
                             new BankException("Kolicina za uplatu mora biti broj."));
                     }
@@ -126,12 +131,14 @@ namespace Service
                 }
                 else
                 {
+                    Audit.WithdrawFailure(clientName, "Pogresan pin!");
                     throw new FaultException<BankException>(
                         new BankException("Pogresan pin."));
                 }
             }
             else
             {
+                Audit.WithdrawFailure(clientName, "Potpis nije validan!");
                 throw new FaultException<BankException>(
                     new BankException("Potpis nije validan."));
             }
@@ -191,17 +198,19 @@ namespace Service
                     encrypted = TripleDES.Encrypt(plaintext, secretKey);
 
                     Program.replicatorProxy.UpdateAccountPin(clientName, HashHelper.HashPassword(newPin));
-
+                    Audit.ResetPinSuccess(clientName);
                     return encrypted;
                 }
                 else
                 {
+                    Audit.ResetPinFailure(clientName, "Stari pin je pogresan!");
                     throw new FaultException<BankException>(
                         new BankException("Stari pin je pogresan."));
                 }
             }
             else
             {
+                Audit.ResetPinFailure(clientName, "Potpis nije validan!");
                 throw new FaultException<BankException>(
                     new BankException("Potpis nije validan."));
             }

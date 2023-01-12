@@ -38,7 +38,7 @@ namespace Service
             host1.Credentials.ClientCertificate.Authentication.RevocationMode = X509RevocationMode.NoCheck;
 
             ///Set appropriate service's certificate on the host. Use CertManager class to obtain the certificate based on the "srvCertCN"
-            host1.Credentials.ServiceCertificate.Certificate = CertManager.GetCertificateFromStorage(StoreName.My, StoreLocation.LocalMachine, srvCertCN);
+            host1.Credentials.ServiceCertificate.Certificate = CertManager.GetCertificateFromStorage(StoreName.My, StoreLocation.LocalMachine, "bankservice");
 
 
 
