@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CardRequestFailure" xml:space="preserve">
-    <value>Korisniku {0} nije moguce kreirati nalog u banci. Razlog: {1}.</value>
+    <value>Korisniku {0} nije moguce kreirati nalog u banci. Razlog: {1}</value>
   </data>
   <data name="CardRequestSuccess" xml:space="preserve">
     <value>Korisniku {0} je uspesno kreiran racun u banci.</value>
   </data>
   <data name="DepositFailure" xml:space="preserve">
-    <value>Uplata na racun korisnika {0} nije moguca. Razlog: {1}.</value>
+    <value>Uplata na racun korisnika {0} nije moguca. Razlog: {1}</value>
   </data>
   <data name="DepositSuccess" xml:space="preserve">
     <value>Korisnik {0} je uspesno uplatio {1} na svoj racun.</value>
   </data>
   <data name="ResetPinFailure" xml:space="preserve">
-    <value>Korisniku {0} nije moguce resetovati pin. Razlog: {1}.</value>
+    <value>Korisniku {0} nije moguce resetovati pin. Razlog: {1}</value>
   </data>
   <data name="ResetPinSuccess" xml:space="preserve">
     <value>Korisnik {0} je uspesno resetovao svoj pin.</value>
   </data>
   <data name="RevokeRequestFailure" xml:space="preserve">
-    <value>Korisniku {0} nije moguce izdati novi sertifikat. Razlog: {1}.</value>
+    <value>Korisniku {0} nije moguce izdati novi sertifikat. Razlog: {1}</value>
   </data>
   <data name="RevokeRequestSuccess" xml:space="preserve">
     <value>Korisniku {0} je uspesno povucen sertifikat i dodeljen novi.</value>
   </data>
   <data name="WithdrawFailure" xml:space="preserve">
-    <value>Isplata sa racuna korisnika {0} nije moguca. Razlog: {1}.</value>
+    <value>Isplata sa racuna korisnika {0} nije moguca. Razlog: {1}</value>
   </data>
   <data name="WithdrawSuccess" xml:space="preserve">
     <value>Korisnik {0} je uspesno podigao sa svog naloga {1}.</value>

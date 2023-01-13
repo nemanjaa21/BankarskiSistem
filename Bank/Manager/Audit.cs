@@ -9,7 +9,7 @@ namespace Manager
 {
     public class Audit : IDisposable
     {
-        private static EventLog customLog = null;
+        public static EventLog customLog = null;
         const string SourceName = "Manager.Audit";
         const string LogName = "BankLogs";
 
@@ -38,7 +38,7 @@ namespace Manager
             string msg = AuditEvents.CardRequestSuccess;
             if (customLog != null)
             {
-                customLog.WriteEntry(msg.Replace("{0}", userName), EventLogEntryType.Information);
+                customLog.WriteEntry(msg.Replace("{0}", userName), EventLogEntryType.Information, (int)AuditEventTypes.CardRequestSuccess);
             }
             else
             {
@@ -51,7 +51,7 @@ namespace Manager
             string msg = AuditEvents.CardRequestFailure;
             if (customLog != null)
             {
-                customLog.WriteEntry(String.Format(msg, userName, reason), EventLogEntryType.Information);
+                customLog.WriteEntry(String.Format(msg, userName, reason), EventLogEntryType.Information, (int)AuditEventTypes.CardRequestFailure);
             }
             else
             {
@@ -64,7 +64,7 @@ namespace Manager
             string msg = AuditEvents.RevokeRequestSuccess;
             if (customLog != null)
             {
-                customLog.WriteEntry(msg.Replace("{0}", userName), EventLogEntryType.Information);
+                customLog.WriteEntry(msg.Replace("{0}", userName), EventLogEntryType.Information, (int)AuditEventTypes.RevokeRequestSuccess);
             }
             else
             {
@@ -77,7 +77,7 @@ namespace Manager
             string msg = AuditEvents.RevokeRequestFailure;
             if (customLog != null)
             {
-                customLog.WriteEntry(String.Format(msg, userName, reason), EventLogEntryType.Information);
+                customLog.WriteEntry(String.Format(msg, userName, reason), EventLogEntryType.Information, (int)AuditEventTypes.RevokeRequestFailure);
             }
             else
             {
@@ -90,7 +90,7 @@ namespace Manager
             string msg = AuditEvents.DepositSuccess;
             if (customLog != null)
             {
-                customLog.WriteEntry(String.Format(msg, userName, amount), EventLogEntryType.Information);
+                customLog.WriteEntry(String.Format(msg, userName, amount), EventLogEntryType.Information, (int)AuditEventTypes.DepositSuccess);
             }
             else
             {
@@ -103,7 +103,7 @@ namespace Manager
             string msg = AuditEvents.DepositFailure;
             if (customLog != null)
             {
-                customLog.WriteEntry(String.Format(msg, userName, reason), EventLogEntryType.Information);
+                customLog.WriteEntry(String.Format(msg, userName, reason), EventLogEntryType.Information, (int)AuditEventTypes.DepositFailure);
             }
             else
             {
@@ -116,7 +116,7 @@ namespace Manager
             string msg = AuditEvents.WithdrawSuccess;
             if (customLog != null)
             {
-                customLog.WriteEntry(String.Format(msg, userName, amount), EventLogEntryType.Information);
+                customLog.WriteEntry(String.Format(msg, userName, amount), EventLogEntryType.Information, (int)AuditEventTypes.WithdrawSuccess);
             }
             else
             {
@@ -129,7 +129,7 @@ namespace Manager
             string msg = AuditEvents.WithdrawFailure;
             if (customLog != null)
             {
-                customLog.WriteEntry(String.Format(msg, userName, reason), EventLogEntryType.Information);
+                customLog.WriteEntry(String.Format(msg, userName, reason), EventLogEntryType.Information, (int)AuditEventTypes.WithdrawFailure);
             }
             else
             {
@@ -142,7 +142,7 @@ namespace Manager
             string msg = AuditEvents.ResetPinSuccess;
             if (customLog != null)
             {
-                customLog.WriteEntry(String.Format(msg, userName), EventLogEntryType.Information);
+                customLog.WriteEntry(String.Format(msg, userName), EventLogEntryType.Information, (int)AuditEventTypes.ResetPinSuccess);
             }
             else
             {
@@ -155,7 +155,7 @@ namespace Manager
             string msg = AuditEvents.ResetPinFailure;
             if (customLog != null)
             {
-                customLog.WriteEntry(String.Format(msg, userName, reason), EventLogEntryType.Information);
+                customLog.WriteEntry(String.Format(msg, userName, reason), EventLogEntryType.Information, (int)AuditEventTypes.ResetPinFailure);
             }
             else
             {

@@ -3,6 +3,8 @@ using Manager;
 using Service.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
@@ -113,6 +115,7 @@ namespace Service
                             XMLHelper.UpdateBankAccountBalance(clientName, -floatAmount);
                             Audit.WithdrawSuccess(clientName, floatAmount);
                             Program.replicatorProxy.UpdateAccountBalance(clientName, -floatAmount);
+                            Task.Run(() => LogHelper.CheckLogs(clientName));
                         }
                         else
                         {

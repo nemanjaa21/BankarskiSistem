@@ -15,9 +15,13 @@ namespace Service
     class Program
     {
         public static WCFReplicator replicatorProxy = null;
+        public static WCFBankingAudit bankingAuditProxy = null;
         static void Main(string[] args)
         {
             ReplicatorProxy();
+
+            BankingAuditProxy();
+
             // Endpoint za transakcije
 
             NetTcpBinding binding1 = new NetTcpBinding();
@@ -39,8 +43,6 @@ namespace Service
 
             ///Set appropriate service's certificate on the host. Use CertManager class to obtain the certificate based on the "srvCertCN"
             host1.Credentials.ServiceCertificate.Certificate = CertManager.GetCertificateFromStorage(StoreName.My, StoreLocation.LocalMachine, "bankservice");
-
-
 
             // Endpoint za sertifikate
 
@@ -92,6 +94,23 @@ namespace Service
             replicatorProxy = new WCFReplicator(binding, endpointAddress);
 
             replicatorProxy.TestCommunication();
+        }
+
+        private static void BankingAuditProxy()
+        {
+            NetTcpBinding binding = new NetTcpBinding();
+            string address = "net.tcp://localhost:17004/BankingAudit";
+
+            binding.Security.Mode = SecurityMode.Transport;
+            binding.Security.Transport.ClientCredentialType = TcpClientCredentialType.Windows;
+            binding.Security.Transport.ProtectionLevel = System.Net.Security.ProtectionLevel.EncryptAndSign;
+
+
+            EndpointAddress endpointAddress = new EndpointAddress(new Uri(address));
+
+            bankingAuditProxy = new WCFBankingAudit(binding, endpointAddress);
+
+            bankingAuditProxy.TestCommunication();
         }
     }
 }
